@@ -1,7 +1,22 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { sendToBackground } from "@plasmohq/messaging"
 
 function IndexPopup() {
   const [data, setData] = useState("")
+  
+  const sendMsg = async () => {
+    const res = await sendToBackground({
+      name: "ping",
+      body: {
+        id: 123
+      }
+    });
+    console.log(res);
+  }
+
+  useEffect(() => {
+    sendMsg();
+  }, []);
 
   return (
     <div
@@ -9,7 +24,7 @@ function IndexPopup() {
         padding: 16
       }}>
       <h2>
-        Welcome to your{" "}
+        Welcome to your house wowo{" "}
         <a href="https://www.plasmo.com" target="_blank">
           Plasmo
         </a>{" "}
