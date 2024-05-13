@@ -1,23 +1,36 @@
 import { sendToBackground } from '@plasmohq/messaging';
-import type { PlasmoCSConfig } from "plasmo"
+import { getPort } from '@plasmohq/messaging/port';
 
+console.log(
+  "xxx Hello ? You may find that having is not so pleasing a thing as wanting. This is not logical, but it is often true."
+)
+
+// 一次性请求
 sendToBackground({
   name: "ping",
   body: {
     id: 123
   },
-  extensionId: 'eipignphbeifaoppngphjhdbdiicglnk' // find this in chrome's extension manager
+  extensionId: 'kkfadmjoonebkhpogbjfcmnnjcdonmaj' // find this in chrome's extension manager
 })
   .then((res) => {
-    console.log(res);
+    console.log('xxx', res);
   })
 
-export const config: PlasmoCSConfig = {
-  matches: ["<all_urls>"],
-  world: "MAIN"
-}  
+/**
+ * https://docs.plasmo.com/framework/messaging#ports port 实现长链接
+ */
+const mailPort = getPort('mail');
+mailPort.onMessage.addListener((msg) => {
+  console.log('xxx port message:', msg);
+});
+
+setTimeout(() => {
+  mailPort.postMessage({
+    from: 'content',
+    data: 'message from content',
+  })
+}, 1000);
 
 export {}
-console.log(
-  "xxx Hello ? You may find that having is not so pleasing a thing as wanting. This is not logical, but it is often true."
-)
+
