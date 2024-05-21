@@ -6,16 +6,16 @@ console.log(
 )
 
 // 一次性请求
-sendToBackground({
-  name: "ping",
-  body: {
-    id: 123
-  },
-  extensionId: 'kkfadmjoonebkhpogbjfcmnnjcdonmaj' // find this in chrome's extension manager
-})
-  .then((res) => {
-    console.log('xxx', res);
-  })
+// sendToBackground({
+//   name: "ping",
+//   body: {
+//     id: 123
+//   },
+//   extensionId: 'kkfadmjoonebkhpogbjfcmnnjcdonmaj' // find this in chrome's extension manager
+// })
+//   .then((res) => {
+//     console.log('xxx', res);
+//   })
 
 /**
  * https://docs.plasmo.com/framework/messaging#ports port 实现长链接

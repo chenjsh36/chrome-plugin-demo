@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react"
 import { sendToBackground } from "@plasmohq/messaging"
+import { usePort } from '@plasmohq/messaging/hook';
 
 function IndexPopup() {
-  const [data, setData] = useState("")
+  const [data, setData] = useState("mail");
+
   
   const sendMsg = async () => {
     const res = await sendToBackground({
@@ -17,6 +19,22 @@ function IndexPopup() {
   useEffect(() => {
     sendMsg();
   }, []);
+
+
+  const mailPort = usePort('popup');
+  const [mailPortData, setMailPortData] = useState("nothing");
+
+  const handleGetItemImages = () => {
+    console.log('xxx handle get item images:');
+    mailPort.send({
+      message: 'xxx from popup message' 
+    })
+  }
+
+  useEffect(() => {
+    console.log('xxx popup data changed from mail port ', mailPort?.data?.message);
+    setMailPortData(`hello ??? ${mailPort?.data?.message ?? 'nothingxxx'}`);
+  }, [mailPort.data]);
 
   return (
     <div
@@ -34,6 +52,9 @@ function IndexPopup() {
       <a href="https://docs.plasmo.com" target="_blank">
         View Docs
       </a>
+      {mailPortData ?? 'nothing'}
+
+      <button onClick={handleGetItemImages}>Get the image</button>
     </div>
   )
 }

@@ -4,7 +4,7 @@ const handler: PlasmoMessaging.PortHandler = async (req, res) => {
   console.log(req)
  
   res.send({
-    message: "xxx Hello from port handler"
+    message: "xxx background  Hello from port handler"
   })
 }
  
