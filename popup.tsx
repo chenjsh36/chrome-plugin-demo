@@ -1,19 +1,32 @@
 import { useState, useEffect } from "react"
-import { sendToBackground } from "@plasmohq/messaging"
+import { sendToBackground, sendToContentScript } from "@plasmohq/messaging"
 import { usePort } from '@plasmohq/messaging/hook';
 
 function IndexPopup() {
   const [data, setData] = useState("mail");
+  const [csMsg, setCsMsg] = useState('');
 
   
   const sendMsg = async () => {
     const res = await sendToBackground({
       name: "ping",
       body: {
-        id: 123
+        id: 123,
+        from: 'popup',
       }
     });
-    console.log(res);
+    console.log('xxx poup recevie data:', res);
+    setData(res?.message ?? 'nothing')
+
+    const csRes = await sendToContentScript({
+      name: 'ping',
+      body: {
+        from: 'popup',
+        message: 'hello from popup',
+      }
+    });
+    console.log('xxx popup receive message: ', csRes);
+    setCsMsg(csRes?.message ?? 'nothing');
   }
 
   useEffect(() => {
@@ -21,20 +34,20 @@ function IndexPopup() {
   }, []);
 
 
-  const mailPort = usePort('popup');
-  const [mailPortData, setMailPortData] = useState("nothing");
+  // const mailPort = usePort('popup');
+  // const [mailPortData, setMailPortData] = useState("nothing");
 
-  const handleGetItemImages = () => {
-    console.log('xxx handle get item images:');
-    mailPort.send({
-      message: 'xxx from popup message' 
-    })
-  }
+  // const handleGetItemImages = () => {
+  //   console.log('xxx handle get item images:');
+  //   mailPort.send({
+  //     message: 'xxx from popup message' 
+  //   })
+  // }
 
-  useEffect(() => {
-    console.log('xxx popup data changed from mail port ', mailPort?.data?.message);
-    setMailPortData(`hello ??? ${mailPort?.data?.message ?? 'nothingxxx'}`);
-  }, [mailPort.data]);
+  // useEffect(() => {
+  //   console.log('xxx popup data changed from mail port ', mailPort?.data?.message);
+  //   setMailPortData(`hello ??? ${mailPort?.data?.message ?? 'nothingxxx'}`);
+  // }, [mailPort.data]);
 
   return (
     <div
@@ -49,12 +62,14 @@ function IndexPopup() {
         Extension!
       </h2>
       <input onChange={(e) => setData(e.target.value)} value={data} />
+      <input onChange={(e) => setData(e.target.value)} value={csMsg} />
+
       <a href="https://docs.plasmo.com" target="_blank">
         View Docs
       </a>
-      {mailPortData ?? 'nothing'}
+      {/* {mailPortData ?? 'nothing'} */}
 
-      <button onClick={handleGetItemImages}>Get the image</button>
+      <button onClick={sendMsg}>Get the image</button>
     </div>
   )
 }
