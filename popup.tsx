@@ -1,75 +1,54 @@
 import { useState, useEffect } from "react"
 import { sendToBackground, sendToContentScript } from "@plasmohq/messaging"
 import { usePort } from '@plasmohq/messaging/hook';
+import type { MessageBody } from "~types";
+import { MessageSource, MessageType } from "~constants";
 
 function IndexPopup() {
-  const [data, setData] = useState("mail");
-  const [csMsg, setCsMsg] = useState('');
+  // 存储封面图片
+  const [loading, setLoading ] = useState<boolean>(false);
+  const [coverImages, setCoverImages] = useState<string[]>([]);
+  const [tmpRes, setTmpRes] = useState<string[]>([]);
 
-  
-  const sendMsg = async () => {
-    const res = await sendToBackground({
-      name: "ping",
-      body: {
-        id: 123,
-        from: 'popup',
-      }
+  const getItemCoverImage = async () => {
+    setLoading(true);
+    const requestBody: MessageBody = {
+      from: MessageSource.POPUP,
+      to: MessageSource.CONTENT_SCRIPT,
+      type: MessageType.REQUEST_COVER_IMAGES,
+    }
+    const res = await sendToContentScript<MessageBody>({
+      name: MessageType.REQUEST_COVER_IMAGES,
+      body: requestBody,
     });
-    console.log('xxx poup recevie data:', res);
-    setData(res?.message ?? 'nothing')
-
-    const csRes = await sendToContentScript({
-      name: 'ping',
-      body: {
-        from: 'popup',
-        message: 'hello from popup',
-      }
-    });
-    console.log('xxx popup receive message: ', csRes);
-    setCsMsg(csRes?.message ?? 'nothing');
+    setTmpRes([res, tmpRes.slice(0, 4)]);
+    setLoading(false);
   }
-
   useEffect(() => {
-    sendMsg();
+    getItemCoverImage();
   }, []);
 
-
-  // const mailPort = usePort('popup');
-  // const [mailPortData, setMailPortData] = useState("nothing");
-
-  // const handleGetItemImages = () => {
-  //   console.log('xxx handle get item images:');
-  //   mailPort.send({
-  //     message: 'xxx from popup message' 
-  //   })
-  // }
-
-  // useEffect(() => {
-  //   console.log('xxx popup data changed from mail port ', mailPort?.data?.message);
-  //   setMailPortData(`hello ??? ${mailPort?.data?.message ?? 'nothingxxx'}`);
-  // }, [mailPort.data]);
-
   return (
-    <div
-      style={{
-        padding: 16
-      }}>
-      <h2>
-        Welcome to your house wowo{" "}
-        <a href="https://www.plasmo.com" target="_blank">
-          Plasmo
-        </a>{" "}
-        Extension!
-      </h2>
-      <input onChange={(e) => setData(e.target.value)} value={data} />
-      <input onChange={(e) => setData(e.target.value)} value={csMsg} />
-
-      <a href="https://docs.plasmo.com" target="_blank">
-        View Docs
-      </a>
-      {/* {mailPortData ?? 'nothing'} */}
-
-      <button onClick={sendMsg}>Get the image</button>
+    <div>
+      {
+        loading ? (
+          <div>
+            loading....
+          </div>
+        ) : (
+          <div>
+            Response: 
+            
+            {
+              tmpRes.map(res => {
+                return (
+                  <div>{res}</div>
+                )
+              })
+            }
+          </div>
+        )
+      }
     </div>
   )
 }
