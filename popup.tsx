@@ -21,7 +21,8 @@ function IndexPopup() {
       name: MessageType.REQUEST_COVER_IMAGES,
       body: requestBody,
     });
-    setTmpRes([res, tmpRes.slice(0, 4)]);
+    console.log('get res from:', res);
+    setTmpRes([...(res?.data?.coverImages ?? []), ...tmpRes.slice(0, 4)]);
     setLoading(false);
   }
   useEffect(() => {
@@ -40,9 +41,13 @@ function IndexPopup() {
             Response: 
             
             {
-              tmpRes.map(res => {
+              tmpRes.map((res, index) => {
                 return (
-                  <div>{res}</div>
+                  <div>
+                    <a href={res} download={`cover_image_${index}`}>
+                      <img src={res} key={res} style={{ height: '20px', width: '20px'}}/>
+                    </a>
+                  </div>
                 )
               })
             }
