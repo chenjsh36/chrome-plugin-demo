@@ -1,9 +1,9 @@
 {
-  "name": "plasmo-hello-world",
-  "displayName": "Plasmo hello world",
+  "name": "shopee-assistant",
+  "displayName": "Shopee Assistant",
   "version": "0.0.1",
-  "description": "A basic Plasmo extension.",
-  "author": "Plasmo Corp. <foss@plasmo.com>",
+  "description": "Download Shopee Product Images. The most popular assistant tool for Shopee!",
+  "author": "Shopee Assistant",
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",

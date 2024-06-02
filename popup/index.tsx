@@ -162,7 +162,8 @@ function IndexPopup() {
 			return new Promise<HTMLAnchorElement>((resolve) => {
 				const { url, label, type = 'default' } = info;
 				var xml = new XMLHttpRequest();
-				xml.open('GET', url, true);
+				var originUrl = url.includes('_tn') ? url.substring(0, url.length - 3) : url;
+				xml.open('GET', originUrl, true);
 				xml.responseType = 'blob';
 				xml.onload = function () {
 					var a = document.createElement('a');
